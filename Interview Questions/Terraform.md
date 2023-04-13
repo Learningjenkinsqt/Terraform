@@ -41,3 +41,4 @@ The terraform plan command creates an execution plan, which lets you preview the
 This means that it keeps track of everything it builds in your cloud environments so that if you need to change something or delete something later, Terraform will know what it built, and it can go back and make those changes for you. That state is stored in what a state file .
 ### What’s a null resource in Terraform?
 The null_resource resource implements the standard resource lifecycle but takes no further action. The triggers argument allows specifying an arbitrary set of values that, when changed, will cause the resource to be replaced.
+
