@@ -13,3 +13,5 @@ EXPOSE 3000
 WORKDIR /tmp/foo
 ENV ASPNETCORE_URLS="http://localhost:3000"
 CMD [ "npm", "start" ]
+
+
