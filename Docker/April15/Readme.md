@@ -134,4 +134,5 @@ CMD ["apache2ctl","-D", "FOREGROUND"]
 ![preview](./Images/Docker9.png)
 
 * Finally we will get the apache Page.
+* 
 ![preview](./Images/Docker10.png)
