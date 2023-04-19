@@ -4,9 +4,11 @@
     * Take a EC2 Machine
     * Install Docker by using below commands,
 
-  `curl -fsSL https://get.docker.com -o get-docker.sh
+  ```
+  curl -fsSL https://get.docker.com -o get-docker.sh
   sh get-docker.sh
-  sudo usermod -aG docker ubuntu`
+  sudo usermod -aG docker ubuntu
+  ```
 
 * Let's install python
    `docker container run -it alpine:latest`
@@ -38,12 +40,13 @@
     * Install Docker
     * Run the below commands
 
-`docker container run -d -P --name pasqldb -e POSTGRES_USER=panoramic -e POSTGRES_PASSWORD=trekking -e POSTGRES_DB=psqldata postgres`
+```
+docker container run -d -P --name pasqldb -e POSTGRES_USER=panoramic -e POSTGRES_PASSWORD=trekking -e POSTGRES_DB=psqldata postgres
 
-`docker container ls`
+docker container ls
 
-`docker exec -it pasqldb /bin/bash`
-
+docker exec -it pasqldb /bin/bash
+```
 ![preview](./Images/Docker3.png)
 
 `psql -U panoramic -W trekking -d psqldata`
