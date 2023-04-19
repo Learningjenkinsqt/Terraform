@@ -9,7 +9,12 @@
   sh get-docker.sh
   sudo usermod -aG docker ubuntu
   ```
-
+* After successful installation please re-login into your machine
+* After re-login try to get docker info
+```
+$ docker -—version
+$ docker info
+```
 * Let's install python
    `docker container run -it alpine:latest`
 
@@ -112,7 +117,7 @@ CMD ["/usr/bin/jenkins"]
     * Take a EC2 Machine
     * Install Docker
     * Create a File and change the directory to that location path.
-    * And create a vi Dockerfile. In that we can write Jenkins Dockerfile.
+    * And create a vi Dockerfile. In that we can write php Dockerfile.
 
 ```Dockerfile
 FROM ubuntu:22.04
@@ -125,7 +130,7 @@ EXPOSE 80
 CMD ["apache2ctl","-D", "FOREGROUND"]
 ```
 * For build the docker image by using below commands
-`docker image build -t jenkins .`
+`docker image build -t php .`
 
 `docker image ls`
 
@@ -137,5 +142,38 @@ CMD ["apache2ctl","-D", "FOREGROUND"]
 ![preview](./Images/Docker9.png)
 
 * Finally we will get the apache Page.
-* 
+ 
 ![preview](./Images/Docker10.png)
+
+* On nginx Server
+    * Take a EC2 Machine
+        * Install Docker
+        * Create a File and change the directory to that location path.
+        * And create a vi Dockerfile. In that we can write nginx Dockerfile.
+  
+```Dockerfile
+FROM ubuntu:22.04
+LABEL author="Prakash" organization="qualitythought"
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt update && apt install nginx -y
+RUN apt install php8.1-fpm -y
+RUN chmod -R 777 /var/www/html
+RUN	echo "<? php phpinfo();?>" > /var/www/html/info.php
+RUN systemctl restart nginx
+EXPOSE 80
+CMD ["nginx","-g", "daemon off;"]
+```
+* For build the docker image by using below commands
+```
+docker image build -t nginx .
+docker image ls
+docker container run --name nginx -d -p 3000:80 nginx
+docker container ls
+```
+![preview](./Images/Docker11.png)
+
+* Finally we will get the nginx Page.
+
+![preview](./Images/Docker12.png)
+
+### create nop commerce and mysql server containers and try to make them work
