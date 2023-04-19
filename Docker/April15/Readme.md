@@ -64,3 +64,39 @@ Insert into Persons Values (1,'Reddy','Prakash', 'Kurnool', 'AndhraPradesh');
 
 select * from Persons;`
 ![preview](./Images/Docker5.png)
+
+
+### Create a Jenkins image by creating your own Dockerfile?
+
+* Let's create an postgres container with user panoramic and password as trekking.
+    * Take a EC2 Machine
+    * Install Docker
+    * Create a File and change the directory to that location path.
+    * And create a vi Dockerfile. In that we can write Dockerfile.
+---Dockerfile
+FROM ubuntu:22.04
+LABEL author="Prakash Reddy" organization="qt" project="learning"
+RUN apt update && apt install openjdk-11-jdk maven curl -y
+RUN curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | tee \
+    /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+RUN echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+    https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+    /etc/apt/sources.list.d/jenkins.list > /dev/null
+RUN apt-get update && apt-get install jenkins -y
+EXPOSE 8080
+CMD ["/usr/bin/jenkins"]
+---
+* For build the docker image by using below commands
+`docker image build -t jenkins .`
+
+`docker image ls`
+
+`docker container run --name jenkins -d -p 3000:8080 jenkins`
+
+`docker container ls`
+
+![preview](./Images/Docker6.png)
+
+* Finally we will get the Jenkins Page.
+
+![preview](./Images/Docker7.png)
