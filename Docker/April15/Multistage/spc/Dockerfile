@@ -7,10 +7,8 @@ COPY --from=vcs /spring-petclinic /spring-petclinic
 RUN ls /spring-petclinic 
 RUN cd /spring-petclinic && mvn package
 
-
-
 FROM amazoncorretto:17-alpine-jdk
-LABEL author="Prakash Reddy"
+LABEL author="Prakash Reddy" organization="qt" project="learning"
 EXPOSE 8080
 ARG HOME_DIR=/spc
 WORKDIR ${HOME_DIR}
