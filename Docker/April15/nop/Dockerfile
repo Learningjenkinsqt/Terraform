@@ -6,7 +6,8 @@ RUN apk update \
     && git clone https://github.com/expressjs/express \
     && cd express \
     && npm install express \
-    && npm install -g express-generator@4 \
+    && npm install -
+    g express-generator@4 \
     && express /tmp/foo && cd /tmp/foo \
     && npm install
 EXPOSE 3000

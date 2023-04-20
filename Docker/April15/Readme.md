@@ -111,7 +111,7 @@ CMD ["/usr/bin/jenkins"]
 
 ![preview](./Images/Docker7.png)
 
-### Creating a dockerfile which runs phpinfo page , user ARG and ENV wherever appropriate.Try on apache server and Try on nginx server.
+### Creating a dockerfile which runs phpinfo page , user ARG and ENV wherever appropriate.Try on apache server.
 
 * Let's Creating a dockerfile which runs phpinfo page , user ARG and ENV wherever appropriate.
     * Take a EC2 Machine
@@ -125,7 +125,7 @@ LABEL author="Prakash" organization="qualitythought"
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt install apache2 -y
 RUN apt install php libapache2-mod-php php -y && \
-	echo "<? php phpinfo();?>" > /var/www/html/info.php
+	echo "<?php phpinfo() ?>" >> /var/www/html/info.php
 EXPOSE 80
 CMD ["apache2ctl","-D", "FOREGROUND"]
 ```
@@ -141,9 +141,13 @@ CMD ["apache2ctl","-D", "FOREGROUND"]
 
 ![preview](./Images/Docker9.png)
 
-* Finally we will get the apache Page.
+* Finally we will get the apache & php Page.
  
 ![preview](./Images/Docker10.png)
+
+![preview](./Images/Docker13.png)
+
+### Creating a dockerfile which runs phpinfo page , user ARG and ENV wherever appropriate. Try on nginx server.
 
 * On nginx Server
     * Take a EC2 Machine
@@ -152,15 +156,20 @@ CMD ["apache2ctl","-D", "FOREGROUND"]
         * And create a vi Dockerfile. In that we can write nginx Dockerfile.
   
 ```Dockerfile
+# Base image
 FROM ubuntu:22.04
 LABEL author="Prakash" organization="qualitythought"
+# Define variables
 ARG DEBIAN_FRONTEND=noninteractive
+# Install nginx and other required packages
 RUN apt update && apt install nginx -y
 RUN apt install php8.1-fpm -y
 RUN chmod -R 777 /var/www/html
 RUN	echo "<? php phpinfo();?>" > /var/www/html/info.php
-RUN systemctl restart nginx
+RUN service nginx restart
+# Expose port 80
 EXPOSE 80
+# Start Nginx and PHP-FPM
 CMD ["nginx","-g", "daemon off;"]
 ```
 * For build the docker image by using below commands
@@ -176,4 +185,52 @@ docker container ls
 
 ![preview](./Images/Docker12.png)
 
+
 ### create nop commerce and mysql server containers and try to make them work
+
+
+
+```Dockerfile
+FROM mcr.microsoft.com/dotnet/sdk:7.0
+LABEL author="Prakash" organization="qt" project="learning"
+ADD https://github.com/nopSolutions/nopCommerce/releases/download/release-4.60.2/nopCommerce_4.60.2_NoSource_linux_x64.zip /nop/nopCommerce_4.60.2_NoSource_linux_x64.zip
+WORKDIR /nop
+RUN apt update && apt install unzip -y && \
+    unzip /nop/nopCommerce_4.60.2_NoSource_linux_x64.zip && \
+    mkdir /nop/bin && mkdir /nop/logs
+EXPOSE 5000
+CMD [ "dotnet", "Nop.Web.dll","--urls", "http://0.0.0.0:5000" ]
+```
+![preview](./Images/Docker14.png)
+
+```
+docker volume create my_vo
+
+docker network create my_network
+
+docker container run -d --name mysqldb -v my_vo:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=rootroot -e MYSQL_DATABASE=employees -e MYSQL_USER=qtdevops -e MYSQL_PASSWORD=rootroot -P --network my_network mysql:8
+
+docker container exec -it mysqldb mysql --password=rootroot
+```
+```
+use employees;
+
+CREATE TABLE Persons (
+    PersonID int,
+    LastName varchar(255),
+    FirstName varchar(255),
+    Address varchar(255),
+    City varchar(255)
+);
+
+Insert into Persons Values (1,'Reddy','Prakash', 'Kurnool', 'AndhraPradesh');
+
+select * from Persons;
+```
+![preview](./Images/Docker15.png)
+![preview](./Images/Docker16.png)
+![preview](./Images/Docker17.png)
+![preview](./Images/Docker18.png)
+![preview](./Images/Docker19.png)
+`docker container run -d --name nop1 -e MYSQL_SERVER=mysql --network my_network -P nop`
+![preview](./Images/Docker21.png)
