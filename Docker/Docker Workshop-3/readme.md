@@ -17,7 +17,7 @@
 ```
 $ docker -—version
 $ docker info
-```
+``` 
 ### Let's create a multi-stage docker file to build nop commerce
 
 * create a dockerfile in `vi Dockerfile`
@@ -96,7 +96,6 @@ docker push 221228654437.dkr.ecr.ap-south-1.amazonaws.com/nopcommerse:latest
 
 ### Write a docker compose file for Nop Commerce.
 
-* Write a docker compose file for Nop Commerce
 
 ```yaml
 ---
@@ -137,7 +136,7 @@ networks:
 
 ![preview](./Images/multi15.png)
 
-* To check the nopcommerce web page use the `http://<publicip>:5000`
+* To check the nopcommerce web page use the `http://<publicip>:32000` (what even you given the opposite port of 32000:5000)
 
 ![preview](./Images/multi16.png)
 
@@ -153,6 +152,7 @@ networks:
   ```
 * After successful installation please re-login into your machine
 * After re-login try to get docker info
+
 ```
 $ docker -—version
 $ docker info
@@ -182,3 +182,103 @@ CMD ["java", "-jar", "spring-petclinic.jar"]
 * To build the docker image by using command `docker image build -t spc .`
 
 ![preview](./Images/multi17.png)
+
+* To check the docker image creation by using command `docker image ls`
+
+* To run the docker container by using command `docker container run --name spc -d -p 32000:8080 spc `
+
+* To check the docker container creation by using command `docker container ls`
+
+![preview](./Images/multi18.png)
+
+* To check the springpetclinic web page use the `http://<publicip>:32000` (what even you given the opposite port of 32000:8080)
+
+![preview](./Images/multi19.png)
+
+### Push these images to Amazon Elastic Container Registry
+
+* Create AWS Configuration, to do this install AWS CLI `sudo apt install awscli`
+
+* `aws configure`
+
+* For aws configuration use your 
+     * AWS Access Key ID
+     * AWS Secret Access Key 
+     * Default region name.
+
+* Create Amazon Elastic Container Registry.
+     * In that you can use Public Repository are else Private Repository
+
+![preview](./Images/multi20.png)
+![preview](./Images/multi21.png)
+![preview](./Images/multi22.png)
+![preview](./Images/multi23.png)
+
+* In that Elastic Container Registry you can Use view Push Commands
+
+```
+aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 221228654437.dkr.ecr.ap-south-1.amazonaws.com
+
+docker build -t springpetclinic .
+
+docker tag springpetclinic:latest 221228654437.dkr.ecr.ap-south-1.amazonaws.com/springpetclinic:latest
+
+docker push 221228654437.dkr.ecr.ap-south-1.amazonaws.com/springpetclinic:latest
+```
+
+![preview](./Images/multi24.png)
+
+* Finally you will create an a Image in Elastic Container Registry.
+
+![preview](./Images/multi25.png)
+
+### Write a docker compose file for Springpetclinic.
+
+```yaml
+---
+version: "3.9"
+services:
+  spc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - spc-net
+    ports:
+      - "32000:8080"
+    depends_on:
+      - spc-db
+
+  spc-db:
+    image: mysql:8
+    networks:
+      - spc-net
+    volumes:
+      - spc-db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: prakashreddy
+      MYSQL_DATABASE: spc
+      MYSQL_USER: spc
+      MYSQL_PASSWORD: prakashreddy
+volumes:
+  spc-db:
+networks:
+  spc-net:
+```
+* Create a Dockerfile for Springpetclic application and insert that into `vi Dockerfile`
+
+* And then write a docker-compose `YAML` file for Springpetclic application and insert that into `vi Docker-compose.yaml`
+
+* To run the docker compose command is `docker compose up -d`
+
+![preview](./Images/multi26.png)
+
+* To check the docker container creation by using command `docker container ls`
+
+![preview](./Images/multi27.png)
+
+* To check the springpetclinic web page use the `http://<publicip>:32000` (what even you given the opposite port of 32000:8080)
+
+![preview](./Images/multi28.png)
+
+### Let's create a multi-stage docker file to build student courses register

@@ -1,0 +1,29 @@
+---
+version: "3.9"
+services:
+  spc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - spc-net
+    ports:
+      - "32000:8080"
+    depends_on:
+      - spc-db
+
+  spc-db:
+    image: mysql:8
+    networks:
+      - spc-net
+    volumes:
+      - spc-db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: prakashreddy
+      MYSQL_DATABASE: spc
+      MYSQL_USER: spc
+      MYSQL_PASSWORD: prakashreddy
+volumes:
+  spc-db:
+networks:
+  spc-net:
