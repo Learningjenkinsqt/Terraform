@@ -1,0 +1,9 @@
+---
+version: "3.9"
+services:
+  pip:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "30000:8080"
