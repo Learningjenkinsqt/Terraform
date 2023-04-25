@@ -1,0 +1,13 @@
+###Write a manifest file to create nginx
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: task1
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      ports:
+        - containerPort: 80

@@ -1,0 +1,17 @@
+### Write a manifest file to create nginx and alpine with sleep 1d
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: task2
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      ports:
+        - containerPort: 80
+    - name: alpine
+      image: alpine
+      args:
+        - sleep
+        - 1d
