@@ -76,7 +76,7 @@ kubectl version
 
 * This downloads the latest stable release of kubectl for Linux amd64 architecture, installs it, and verifies the installation.
 
-* Install minikube
+### Install minikube
 ```
 curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
 sudo install minikube-linux-amd64 /usr/local/bin/minikube

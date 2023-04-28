@@ -75,7 +75,7 @@ Kubernetes resources are defined by a `manifest` file written in `YAML`. When th
     * After successful installation re-login into your machine
     * After re-login try to get docker info `$ docker info`
     * Install CRI-Dockerd [Refer Here](https://github.com/Mirantis/cri-dockerd)
-    * Run the below commands as root user in all the nodes
+    * Run the below commands as `root user` in all the nodes
 ```
 # Run these commands as root
 ###Install GO###
