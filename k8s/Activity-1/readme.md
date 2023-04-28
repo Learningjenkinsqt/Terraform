@@ -16,7 +16,7 @@ metadata:
 spec:
   containers:
     - name: spring-petclinic
-      image: prakashreddy2525/qtspringpetclinic
+      image: prakashreddy2525/spc
       ports:
         - containerPort: 8080
 ```

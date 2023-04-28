@@ -3,11 +3,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: spring-petclinic
-  labels:
-    app: spring-petclinic
 spec:
   containers:
     - name: spring-petclinic
-      image: springcommunity/spring-petclinic-api-gateway
+      image: prakashreddy2525/spc
       ports:
         - containerPort: 8080
