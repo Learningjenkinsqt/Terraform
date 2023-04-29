@@ -5,9 +5,9 @@ Kubernetes
 
 * K8s described as `Production grade container management` 
 
-* What Kubernetes can do?
-
+### What Kubernetes can do?
 ![preview](./Images/k8s6.png)
+
 Kubernetes Architecture
 ------------------------
 

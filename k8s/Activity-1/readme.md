@@ -58,3 +58,5 @@ kubectl describe pod spring-petclinic
 ![preview](./Images/image4.png)
 
 ![preview](./Images/image5.png)
+
+
