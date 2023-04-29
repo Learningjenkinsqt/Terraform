@@ -37,7 +37,6 @@ spec:
       ports:
         - containerPort: 5000
 ```
-
 ### Execute the kubectl commands kubectl get pods and describe pods
 
 ```
@@ -49,14 +48,12 @@ kubectl describe pod nopcommerce-pod
 kubectl describe pod spring-petclinic
 ```
 
-![preview](./Images/image1.png)
+![preview](./Images/Image1.png)
 
-![preview](./Images/image2.png)
+![preview](./Images/Image2.png)
 
-![preview](./Images/image3.png)
+![preview](./Images/Image3.png)
 
-![preview](./Images/image4.png)
+![preview](./Images/Image4.png)
 
-![preview](./Images/image5.png)
-
-
+![preview](./Images/Image5.png)
