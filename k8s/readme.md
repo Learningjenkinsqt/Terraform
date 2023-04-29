@@ -5,8 +5,14 @@ Kubernetes
 
 * K8s described as `Production grade container management` 
 
+* What Kubernetes can do?
+
+![preview](./Images/k8s6.png)
 Kubernetes Architecture
 ------------------------
+
+![preview](./Images/k8s0.png)
+![preview](./Images/k8s7.png)
 ### Pod
 
 * A group of one or more containers.The smallest unit of k8s.The container has no ip address Pod has an IP address.
