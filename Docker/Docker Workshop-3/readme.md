@@ -365,6 +365,8 @@ docker push public.ecr.aws/n0j7b7l2/studentcourcereastapi:latest
 
 ![preview](./Images/multi40.png)
 
+![preview](./Images/multi42.png)
+
 * Finally you will create an a Image in Elastic Container Registry.
 
 ![preview](./Images/multi41.png)
