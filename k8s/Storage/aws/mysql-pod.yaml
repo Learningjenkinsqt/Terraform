@@ -1,0 +1,29 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql-pvol
+spec:
+  containers:
+    - name: mysql-contianer
+      image: mysql:8.0
+      ports:
+        - containerPort: 3306
+          protocol: TCP
+      env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: motherindia
+        - name: MYSQL_DATABASE
+          value: employees
+        - name: MYSQL_USER
+          value: devops
+        - name: MYSQL_PASSWORD
+          value: devops
+      volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mysql-vol
+  volumes:
+    - name: mysql-vol
+      persistentVolumeClaim:
+        claimName: mysql-aws-claim
+        readOnly: false
