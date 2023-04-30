@@ -1,0 +1,30 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deploy
+  annotations:
+    kubernetes.io/change-cause: "update to phpmyadmin"
+spec:
+  minReadySeconds: 5
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 50%
+  template:
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+        ver: "1.23"
+    spec:
+      containers:
+        - name: nginx
+          image: phpmyadmin
+          ports:
+            - containerPort: 80

@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-deploy
+spec:
+  minReadySeconds: 10
+  replicas: 8
+  selector:
+    matchLabels:
+      app: jenkins
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 50%
+  template:
+    metadata:
+      name: jenkins-pod
+      labels:
+        app: jenkins
+        version: "2.60.3"
+    spec:
+      containers:
+        - name: jenkins
+          image: jenkins:2.60.3
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+          livenessProbe:
+            tcpSocket:
+              port: 8080
