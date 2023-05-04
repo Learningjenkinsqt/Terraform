@@ -188,6 +188,40 @@ Code language: JavaScript (javascript)
 
 [ReferHere](https://kubernetes.io/docs/concepts/workloads/controllers/job/) for jobs official docs.
 
+### Job:
+```yaml
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: my-namespace
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: demo-job
+  namespace: my-namespace
+spec:
+  backoffLimit: 3
+  manualSelector: true
+  selector:
+    matchLabels:
+      purpose: execute
+  template:
+    metadata:
+      name: demo-pod
+      namespace: my-namespace
+      labels:
+        purpose: execute
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: download
+          image: alpine:3
+          command:
+            - sleep
+            - 60s
+```
 ### CronJob: 
 ```yaml
 ---
@@ -275,6 +309,46 @@ spec:
     - name: webport
       port: 35000
       targetPort: 8080
+```
+### DaemonSet
+* A DaemonSet ensures that all (or some) Nodes run a copy of a Pod.
+* As nodes are added to the cluster, Pods are added to them.
+* As nodes are removed from the cluster, those Pods are garbage collected.
+* Deleting a DaemonSet will clean up the Pods it created.
+
+* Some typical uses of a DaemonSet are:
+    * running a cluster storage daemon on every node
+    * running a logs collection daemon on every node
+    * running a node monitoring daemon on every node
+
+#### Lets Create a DaemonSet
+
+```yaml
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: daemonset-demo
+  labels:
+    app: daemonset-example
+spec:
+  minReadySeconds: 10
+  selector:
+    matchLabels:
+      app: daemon
+  template:
+    metadata:
+      labels:
+        app: daemon
+        version: "1.0"
+    spec:
+      containers:
+        - name: alpine
+          image: alpine
+          args:
+            - /bin/sh
+            - -c
+            - sleep 1d
 ```
 
 [Refer Here](https://jamesdefabia.github.io/docs/user-guide/kubectl-cheatsheet/) for kubectl Commands, kubectl-cheatsheet.
