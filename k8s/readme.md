@@ -13,6 +13,7 @@ Kubernetes Architecture
 
 ![preview](./Images/k8s0.png)
 ![preview](./Images/k8s7.png)
+
 ### Pod
 
 * A group of one or more containers.The smallest unit of k8s.The container has no ip address Pod has an IP address.
@@ -23,10 +24,12 @@ Kubernetes Architecture
 * Kublet is a small, lightweight Kubernetes node agent that runs on each node in a Kubernetes cluster.
 * It's responsible for managing the nodes and communicating with the Kubernetes master. 
 * It's also responsible for making sure that the containers running on the nodes are healthy and running correctly.
+
 ### Kube-proxy
 
 * Kube-proxy is a network proxy service for Kubernetes that is responsible for routing traffic to different services within the cluster.
 * It is responsible for forwarding traffic from one service to another, allowing for communication between different components of the Kubernetes cluster.
+
 ### Service
 
 * In Kubernetes, a service is an object that abstracts the underlying infrastructure and provides a unified access point for the applications that are running on the cluster. 
@@ -68,6 +71,214 @@ etcd is a `consistent and highly-available key value store` used as Kubernetesâ€
 * Kubectl is the main interface that allows users to create (and manage) individual objects or groups of objects inside a Kubernetes cluster.
 
 Kubernetes resources are defined by a `manifest` file written in `YAML`. When the manifest is deployed, an object is created `that aims to reach the desired state within the cluster`. From that point, the appropriate controller watches the object and `updates the clusterâ€™s existing state to match the desired state`.
+
+### Namespace
+
+* A way to organize cluster into virtual sub-cluster.
+
+### What is difference between namespace and pod?
+
+* A pod is a unit of replication on a cluster.
+* A cluster can contain many pods, related or unrelated [and] grouped under the tight logical borders called namespaces.
+
+### Controllers
+
+* Controllers in k8s control/maintain state of k8s objects.
+
+### Replicaset
+
+* Replicaset is controller which maintains count of pads as desired state.
+```yaml
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: jenkins-rs
+spec:
+  minReadySeconds: 5
+  replicas: 3
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      name: jenkins-pod
+      labels:
+        app: jenkins
+    spec:
+      containers:
+        - name: jenkins
+          image: jenkins/jenkins:lts-jdk11
+          ports:
+            - containerPort: 8080
+```
+
+### Labels
+
+* Labels are key value pairs that can be attaches as metadata to k8s object.
+* Labels helps in selecting/querying/filtering objects.
+
+* Labels can be selected using
+    * equality based [ReferHere](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#equality-based-requirement)
+    * set based [ReferHere](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#set-based-requirement)
+
+```yaml
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx1
+  labels:
+    app: nginx
+    ver: "1.23"
+spec:
+  containers:
+    - image: nginx:1.23
+      name: nginx
+      ports: 
+        - containerPort: 80
+          protocol: TCP
+```
+
+### Limits
+* Kubernetes defines limits as a maximum amount of a resource to be used by a container.
+* This means that the container can never consume more than the memory amount or CPU amount indicated.
+```yaml
+resources:
+  limits:
+    cpu: 0.5
+      memory: 100Mi
+```
+#### Limits are used:
+* When allocating Pods to a Node. If no requests are set, by default, Kubernetes will assign requests = limits.
+* At runtime, Kubernetes will check that the containers in the Pod are not consuming a higher amount of resources than indicated in the limit.
+
+![preview](./Images/k8s8.png)
+
+### Namespace LimitRange
+```yaml
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cpu-resource-constraint
+spec:
+  limits:
+  - default:
+      cpu: 500m
+    defaultRequest:
+      cpu: 500m
+    min:
+      cpu: 100m
+    max:
+      cpu: "1"
+    type: Container
+Code language: JavaScript (javascript)
+```
+
+### Jobs
+
+* A Job creates one or more Pods and will continue to retry execution of the Pods until a specified number of them successfully terminate.
+* As pods successfully complete, the Job tracks the successful completions.
+* When a specified number of successful completions is reached, the task (ie, Job) is complete.
+* Deleting a Job will clean up the Pods it created. Suspending a Job will delete its active Pods until the Job is resumed again.
+
+* K8s has two types of jobs
+    * Job: Run an activity/script to completion
+    * CronJob: Run an activity/script to completion at specific time period or intervals.
+
+[ReferHere](https://kubernetes.io/docs/concepts/workloads/controllers/job/) for jobs official docs.
+
+### CronJob: 
+```yaml
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: periodicjob
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    metadata:
+      name: cronjobdata
+    spec:
+      backoffLimit: 3
+      template:
+        metadata:
+          name: cronjobpod
+          labels:
+            purpose: execute
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: download
+              image: alpine:3
+              command:
+                - sleep
+                - 30s
+```
+
+### Deployment:
+* A Deployment provides declarative updates to pods and ReplicaSets.
+* It allows you to define the desired state of your application, including the number of replicas and container specifications.
+* Deployments support features like rolling updates, rollbacks, scaling, and more.
+* They also ensure high availability by managing ReplicaSets in the background.
+
+```yaml
+### Deployment for Jenkins
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-deploy
+spec:
+  minReadySeconds: 10
+  replicas: 8
+  selector:
+    matchLabels:
+      app: jenkins
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 50%
+  template:
+    metadata:
+      name: jenkins-pod
+      labels:
+        app: jenkins
+        version: "2.60.3"
+    spec:
+      containers:
+        - name: jenkins
+          image: jenkins:2.60.3
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+### Service file
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-svc-lb
+spec:
+  type: LoadBalancer
+  selector:
+    app: jenkins
+  ports:
+    - name: webport
+      port: 35000
+      targetPort: 8080
+```
+
+[Refer Here](https://jamesdefabia.github.io/docs/user-guide/kubectl-cheatsheet/) for kubectl Commands, kubectl-cheatsheet.
+[Refe Here](https://kubernetes.io/docs/tasks/tools/) to install the kubectl, kind, minicube and kubeadm tools
 
 ### Installing k8s cluster on ubuntu vms
 
