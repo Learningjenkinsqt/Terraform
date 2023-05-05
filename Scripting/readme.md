@@ -1,4 +1,4 @@
-# when user enter y or Y or Yes or yes continue any other key exit
+### when user enter y or Y or Yes or yes continue any other key exit
 ```bash
 #!/bin/bash
 
