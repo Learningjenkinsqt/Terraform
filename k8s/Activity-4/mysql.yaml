@@ -1,0 +1,185 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-svc
+spec:
+  selector:
+    app: mysql
+  ports:
+    - name: mysql
+      port: 3306
+      targetPort: 3306
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-svc
+  labels:
+    app: 'mysql'
+spec:
+  minReadySeconds: 2
+  replicas: 1
+  serviceName: mysql-svc
+  selector:
+    matchLabels:
+      app: 'mysql'
+  template:
+    metadata:
+      name: mysql-pod
+      labels:
+        app: 'mysql'
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: laxman
+            - name: MYSQL_USER
+              value: laxman
+            - name: MYSQL_PASSWORD
+              value: laxman
+            - name: MYSQL_DATABASE
+              value: employees
+          volumeMounts:
+            - name: mysql-vol
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: mysql-vol
+          persistentVolumeClaim:
+          claimName: mysql-pvc
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nopcommerce
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nopcommerce
+  template:
+    metadata:
+      labels:
+        app: nopcommerce
+    spec:
+      containers:
+      - name: nop
+        image: raji07/rajeshwari-nopcommerce:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 5000
+
+---
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: headless-service
+spec:
+  clusterIP: None
+  selector:
+    app: mysql
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app.kubernetes.io/name: MyApp
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 49152
+  externalIPs:
+    - 198.51.100.32
+
+---
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nop-regular-svc
+  labels:
+    app: nop
+spec:
+  selector:
+    app: nop
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 5000
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nopstatefull
+  labels:
+    app: nop
+spec:
+  minReadySeconds: 2
+  replicas: 1
+  serviceName: nop-regular-svc
+  selector:
+    matchLabels:
+      app: nop
+  template:
+    metadata:
+      name: nop-temp
+      labels:
+        app: nop
+    spec:
+      containers:
+        - name: nop
+          image: lakshminarayana1849/nopcommerse
+          ports:
+            - containerPort: 5000
+        - name: mysql
+          image: mysql:8
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: laxman
+            - name: MYSQL_USER
+              value: laxman
+            - name: MYSQL_PASSWORD
+              value: laxman
+            - name: MYSQL_DATABASE
+              value: employees
+          volumeMounts:
+            - name: my-volume
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: my-volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nop-regular-svc
+  labels:
+    app: nop
+spec:
+  selector:
+    app: nop
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 5000
+  type: LoadBalancer        
