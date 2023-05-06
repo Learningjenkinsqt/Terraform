@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-congigmap
+data:
+  MYSQL_ROOT_PASSWORD: prakashreddy
+  MYSQL_DATABASE: employees
+  MYSQL_USER: prakashreddy
+  MYSQL_PASSWORD: prakashreddy
