@@ -124,7 +124,8 @@ metadata:
 spec:
   selector:
     app: nopCommerce
-  type: LoadBalancer
+  type: ClusterIp
+  clusterIP: None
   ports:
     - name: nop-svc
       port: 5000
@@ -172,10 +173,11 @@ spec:
 ### Create a Load Balancer to expose the nopCommerce to External World
 
 ```yaml
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nopdeploy
+  name: nop-deploy
   labels:
     app: nop
 spec:
@@ -188,7 +190,7 @@ spec:
     type: RollingUpdate
   template:
     metadata:
-      name: noppod
+      name: nop-pod
       labels:
         app: nop
     spec:
@@ -204,7 +206,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: nopsvc
+  name: nop-svc
 spec:
   type: LoadBalancer
   selector:
