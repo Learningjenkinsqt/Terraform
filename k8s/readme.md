@@ -560,3 +560,35 @@ eksctl create cluster --name valaxy-cluster \
 ```
 ### To delete the EKS clsuter
 `eksctl delete cluster valaxy --region ap-south-1`
+
+
+Setup Kubernetes on Azure AKS
+--------------------------------
+* Install Azure Cli: [Refer Here](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli)
+* Install kubectl: [Refer Here](https://kubernetes.io/docs/tasks/tools/#kubectl)
+* Execute `az login`
+* [Refer Here](https://learn.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-deploy-cli) for azure aks
+* Create a resource group and continue according to the docs [Refer Here](https://learn.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-deploy-cli#create-a-resource-group) 
+```
+curl -L https://aka.ms/InstallAzureCli | bash
+
+source ~/.bashrc
+
+az login
+
+az login --tenant 00e5206b-f549-447d-8eaf-917573339f60
+
+az group create --name myResourceGroup --location eastus
+
+az aks create -g myResourceGroup -n myAKSCluster --enable-managed-identity --node-count 1 --enable-addons monitoring --enable-msi-auth-for-monitoring  --generate-ssh-keys
+
+sudo -i
+
+az aks install-cli
+
+exit
+
+az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
+
+kubectl get nodes
+```
