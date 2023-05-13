@@ -313,5 +313,59 @@ spec:
 
 ![preview](./Images/Task5.png)
 
+# Upgrade Kubernetes cluster from version 1.25 to version 1.27
+
 * Create k8s cluster with version 1.25 and run any deployment(nginx/any) and then upgrade cluster to version 1.27.
 
+* we have to upgrade k8s version from 1.25 to 1.27, in that process we should have to upgrade first 1.25 version to 1.26 version after that 1.26 to 1.27 version.
+
+* For that lets create a kubernetes cluster with kubeadm masternode and then two worker nodes
+* Here we can run all the common commands of kubeadm, but with few changes.
+* changes are installing kubeadm, kubectl, kubelet with specific versions.
+
+`sudo apt install kubeadm=1.25.9-00 kubectl=1.25.9-00 kubelet=1.25.9-00 -y`
+
+* Installing kubernetes with version of `kubeadm init --kubernetes-version "1.25.9" --pod-network-cidr "10.244.0.0/16" --cri-socket unix:///var/run/cri-dockerd.sock`
+
+* The control plane and nodes are successfully installed k8s with v 1.25.
+
+## Upgrading Workflow
+  * upgrade primary control plane node
+  * upgrade additional control plane nodes
+  * upgrade worker nodes
+### upgrading control plane node - Master node
+* Steps are
+    * Upgrade kubeadm on the Control Plane node
+    * Drain the Control Plane node
+    * Plan the upgrade (kubeadm upgrade plan)
+    * Apply the upgrade (kubeadm upgrade apply)
+    * Upgrade kubelet & kubectl on the control Plane node
+    * Uncordon the Control Plane node
+
+* upgrade control plane node
+  * Determine which version to upgrade `apt update` `apt-cache madison kubeadm`
+  
+  * Upgrade Plan `kubeadm upgrade plan`
+  
+  * Updrading kubeadm tool
+   ```
+   apt-mark unhold kubeadm
+   apt-get update
+   apt-get install kubeadm=1.26.0-00
+   apt-mark hold kubeadm
+   ```
+  * Drain control node `kubectl drain kube-adm --ignore-daemonsets --delete-local-data`
+  
+  * Upgrade plan and apply new version `kubeadm upgrade plan` `kubeadm upgrade apply v1.26.0`
+
+  * Uncordon control node ` kubectl uncordon kube-adm`
+
+  * Upgrade kubectl and kubelet and after that daemon reload and restart kubelet
+  ```
+  apt-mark unhold kubectl kubelet
+  apt update
+  apt install kubectl=1.26.0-00 kubelet=1.26.0-00 -y
+  apt-mark hold kubectl kubelet
+  systemctl daemon-reload
+  systemctl restart kubectl
+  ```

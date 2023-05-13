@@ -5,8 +5,8 @@ kind: Deployment
 metadata:
   name: jenkins-deploy
 spec:
-  minReadySeconds: 10
-  replicas: 8
+  minReadySeconds: 5
+  replicas: 1
   selector:
     matchLabels:
       app: jenkins
@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
         - name: jenkins
-          image: jenkins:2.60.3
+          image: jenkins/jenkins
           ports:
             - containerPort: 8080
               protocol: TCP
